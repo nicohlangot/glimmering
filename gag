@@ -1,0 +1,117 @@
+--// Auto Glimmering Script Loading Screen
+--// By Nicoh
+
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+
+-- ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "AutoGlimmerLoading"
+ScreenGui.Parent = CoreGui
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.ResetOnSpawn = false
+
+-- Background Frame
+local BG = Instance.new("Frame")
+BG.Size = UDim2.new(1, 0, 1, 0)
+BG.Position = UDim2.new(0, 0, 0, 0)
+BG.BackgroundColor3 = Color3.fromRGB(80, 0, 100)
+BG.Parent = ScreenGui
+
+-- Gradient for purple & green moving animation
+local UIGradient = Instance.new("UIGradient")
+UIGradient.Color = ColorSequence.new{
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 0, 200)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 100)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 0, 200))
+}
+UIGradient.Rotation = 0
+UIGradient.Parent = BG
+
+-- Animate Gradient
+task.spawn(function()
+	while ScreenGui.Parent do
+		for i = 0, 360, 1 do
+			UIGradient.Rotation = i
+			task.wait(0.02)
+		end
+	end
+end)
+
+-- Main Frame
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0.35, 0, 0.25, 0)
+MainFrame.Position = UDim2.new(0.325, 0, 0.35, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BackgroundTransparency = 0.2
+MainFrame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner", MainFrame)
+UICorner.CornerRadius = UDim.new(0, 16)
+
+local UIStroke = Instance.new("UIStroke", MainFrame)
+UIStroke.Thickness = 2
+UIStroke.Color = Color3.fromRGB(255, 255, 255)
+
+-- Title
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, 0, 0.3, 0)
+Title.Position = UDim2.new(0, 0, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Auto Glimmering Script"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextScaled = true
+Title.Parent = MainFrame
+
+-- Subtitle
+local Subtitle = Instance.new("TextLabel")
+Subtitle.Size = UDim2.new(1, 0, 0.2, 0)
+Subtitle.Position = UDim2.new(0, 0, 0.25, 0)
+Subtitle.BackgroundTransparency = 1
+Subtitle.Text = "By Nicoh"
+Subtitle.TextColor3 = Color3.fromRGB(180, 255, 200)
+Subtitle.Font = Enum.Font.Gotham
+Subtitle.TextScaled = true
+Subtitle.Parent = MainFrame
+
+-- Progress Label
+local ProgressText = Instance.new("TextLabel")
+ProgressText.Size = UDim2.new(1, 0, 0.25, 0)
+ProgressText.Position = UDim2.new(0, 0, 0.5, 0)
+ProgressText.BackgroundTransparency = 1
+ProgressText.Text = "Installing... 0%"
+ProgressText.TextColor3 = Color3.fromRGB(255, 255, 255)
+ProgressText.Font = Enum.Font.Gotham
+ProgressText.TextScaled = true
+ProgressText.Parent = MainFrame
+
+-- Progress Bar
+local BarBG = Instance.new("Frame")
+BarBG.Size = UDim2.new(0.85, 0, 0.15, 0)
+BarBG.Position = UDim2.new(0.075, 0, 0.8, 0)
+BarBG.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+BarBG.Parent = MainFrame
+local UICornerBarBG = Instance.new("UICorner", BarBG)
+UICornerBarBG.CornerRadius = UDim.new(0, 10)
+
+local BarFill = Instance.new("Frame")
+BarFill.Size = UDim2.new(0, 0, 1, 0)
+BarFill.BackgroundColor3 = Color3.fromRGB(0, 255, 120)
+BarFill.Parent = BarBG
+local UICornerBarFill = Instance.new("UICorner", BarFill)
+UICornerBarFill.CornerRadius = UDim.new(0, 10)
+
+-- Fake Installation Logic (3 minutes total)
+task.spawn(function()
+	local totalTime = 180 -- 3 minutes
+	for i = 1, 100 do
+		ProgressText.Text = "Installing Bypass... " .. i .. "%"
+		TweenService:Create(BarFill, TweenInfo.new(1, Enum.EasingStyle.Linear), {
+			Size = UDim2.new(i/100, 0, 1, 0)
+		}):Play()
+		task.wait(totalTime / 100) -- evenly spread across 3 minutes
+	end
+	-- Stay stuck at 100% forever
+	ProgressText.Text = "Installing Bypass... 100%"
+end)
